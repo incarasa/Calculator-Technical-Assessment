@@ -2,6 +2,9 @@ from fastapi import FastAPI, HTTPException
 
 app = FastAPI()
 
+@app.get("/")
+def root():
+    return {"message": "Calculator API is running"}
 
 @app.get("/api/add")
 def add(a: float, b: float):

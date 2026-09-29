@@ -5,6 +5,12 @@ from main import app
 
 client = TestClient(app)
 
+def test_root():
+    response = client.get("/")
+
+    assert response.status_code == 200
+    assert response.json() == {"message": "Calculator API is running"}
+
 
 def test_add():
     response = client.get("/api/add", params={"a": 5, "b": 3})
