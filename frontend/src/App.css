@@ -1,0 +1,95 @@
+.app-shell {
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.calculator {
+  width: min(100%, 380px);
+  padding: 22px;
+  border: 1px solid #dde3ea;
+  border-radius: 24px;
+  background: #f8fafc;
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.14);
+}
+
+.display-panel {
+  min-height: 118px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-end;
+  gap: 8px;
+  padding: 20px;
+  overflow: hidden;
+  border-radius: 16px;
+  color: #f8fafc;
+  background: #172033;
+}
+
+.operation {
+  min-height: 22px;
+  color: #9eabc0;
+  font-size: 0.84rem;
+}
+
+.display {
+  width: 100%;
+  overflow: hidden;
+  font-size: clamp(2rem, 9vw, 2.8rem);
+  font-weight: 500;
+  line-height: 1.1;
+  text-align: right;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.message {
+  min-height: 36px;
+  margin: 13px 4px;
+  color: #64748b;
+  font-size: 0.76rem;
+  line-height: 1.35;
+  text-align: center;
+}
+
+.message--error { color: #b42318; }
+
+.keypad {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.key {
+  min-width: 0;
+  min-height: 62px;
+  border: 1px solid #dce2e9;
+  border-radius: 14px;
+  color: #1e293b;
+  background: #ffffff;
+  font: inherit;
+  font-size: 1.15rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 150ms ease, border-color 150ms ease, transform 80ms ease;
+}
+
+.key:hover { border-color: #b9c3cf; background: #f1f5f9; }
+.key:active { transform: translateY(1px); }
+.key:focus-visible { outline: 3px solid rgba(37, 99, 235, 0.32); outline-offset: 2px; }
+.key:disabled { cursor: wait; opacity: 0.65; }
+.key--utility { color: #475569; background: #e8edf3; }
+.key--operator { color: #1d4ed8; background: #e8efff; border-color: #cedbff; font-size: 1.35rem; }
+.key--operator:hover { background: #dbe7ff; }
+.key--equals { color: #ffffff; background: #2563eb; border-color: #2563eb; }
+.key--equals:hover { background: #1d4ed8; border-color: #1d4ed8; }
+.key--wide, .key--zero { grid-column: span 2; }
+
+@media (max-width: 420px) {
+  .app-shell { padding: 12px; }
+  .calculator { padding: 16px; border-radius: 20px; }
+  .key { min-height: 58px; }
+}

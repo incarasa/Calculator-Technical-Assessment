@@ -2,7 +2,12 @@
 
 A full-stack calculator application built as part of a technical assessment.
 
-The application provides a REST API for basic arithmetic operations and a React frontend for interacting with the calculator.
+The application provides a REST API for basic arithmetic operations and a React frontend with a calculator-style interface. Arithmetic operations are performed by the backend, while the frontend manages the calculator state and user interaction.
+
+## Project Preview
+<center>
+<img src="preview.gif" alt="calculator app preview gif" width="700">
+</center>
 
 ## Project Structure
 
@@ -13,28 +18,26 @@ Calculator-Technical-Assessment/
 │   ├── test_main.py
 │   └── requirements.txt
 ├── frontend/
-└── README.md
+│   ├── src/
+│   │   ├── App.jsx
+│   │   ├── App.css
+│   │   └── App.test.jsx
+│   ├── package.json
+│   └── ...
+├── README.md
+└── .gitignore
 ```
 
-> The frontend will be added as the next stage of the project.
+## Requirements
 
-## Backend
-
-The backend is a stateless REST API built with FastAPI. It currently supports the four basic arithmetic operations:
-
-- Addition
-- Subtraction
-- Multiplication
-- Division
-
-Each operation is exposed through an independent endpoint and receives its operands as query parameters.
-
-### Requirements
+Before running the project, make sure you have installed:
 
 - Python 3
 - pip
+- Node.js
+- npm
 
-### Setup
+## Setup
 
 Clone the repository:
 
@@ -43,7 +46,9 @@ git clone https://github.com/incarasa/Calculator-Technical-Assessment
 cd Calculator-Technical-Assessment
 ```
 
-Create a virtual environment:
+### Backend Setup
+
+Create a Python virtual environment.
 
 **Windows**
 
@@ -65,9 +70,22 @@ Install the backend dependencies:
 pip install -r backend/requirements.txt
 ```
 
-### Running the Backend
+### Frontend Setup
 
-From the project root, run:
+Install the frontend dependencies:
+
+```bash
+cd frontend
+npm install
+```
+
+## Running the Application
+
+The frontend and backend run as separate development servers.
+
+### Run the Backend
+
+From the project root:
 
 ```bash
 uvicorn backend.main:app --reload
@@ -79,7 +97,7 @@ The API will be available at:
 http://127.0.0.1:8000
 ```
 
-A successful request to the root endpoint should return:
+A request to the root endpoint should return:
 
 ```json
 {
@@ -87,21 +105,38 @@ A successful request to the root endpoint should return:
 }
 ```
 
-### API Documentation
+### Run the Frontend
+
+Open another terminal and navigate to the frontend directory:
+
+```bash
+cd frontend
+npm run dev
+```
+
+Vite will display the local development URL, typically:
+
+```text
+http://localhost:5173
+```
+
+Open this URL in a browser to use the calculator.
+
+## API Documentation
 
 FastAPI automatically generates interactive OpenAPI documentation.
 
-Once the backend is running, open:
+With the backend running, open:
 
 ```text
 http://127.0.0.1:8000/docs
 ```
 
-The Swagger UI can be used to inspect and test all available endpoints.
+The Swagger UI can be used to inspect and manually test all available API endpoints.
 
 ## API Usage
 
-All calculator operations use `GET` requests and receive their operands through the `a` and `b` query parameters.
+All calculator operations use `GET` requests and receive the operands through the `a` and `b` query parameters.
 
 ### Addition
 
@@ -159,7 +194,7 @@ Response:
 }
 ```
 
-Division by zero is rejected with HTTP `400 Bad Request`:
+Division by zero returns HTTP `400 Bad Request`:
 
 ```http
 GET /api/divide?a=10&b=0
@@ -171,7 +206,7 @@ GET /api/divide?a=10&b=0
 }
 ```
 
-Invalid numeric parameters are automatically validated by FastAPI.
+Invalid numeric parameters are automatically validated by FastAPI and return HTTP `422`.
 
 For example:
 
@@ -179,19 +214,21 @@ For example:
 GET /api/add?a=hello&b=3
 ```
 
-returns HTTP `422`.
+## Testing
 
-## Backend Tests
+Both the backend and frontend include automated tests covering their main functionality.
 
-Backend tests are implemented using `pytest` and FastAPI's `TestClient`.
+### Backend Tests
 
-Run the test suite from the project root with:
+Backend tests use `pytest` and FastAPI's `TestClient`.
+
+From the project root:
 
 ```bash
 python -m pytest backend/test_main.py -v
 ```
 
-The current test suite covers:
+The backend test suite covers:
 
 - Root endpoint
 - Addition
@@ -199,44 +236,86 @@ The current test suite covers:
 - Multiplication
 - Division
 - Division by zero
+- Invalid numeric input
 
-All backend tests are currently passing.
-
-### Test Coverage
+### Backend Coverage
 
 Coverage is measured using `pytest-cov`.
 
-Run:
-
 ```bash
-python -m pytest backend/test_main.py --cov=backend.main --cov-report=term-missing
+python -m pytest backend/test_main.py --cov=main --cov-report=term-missing
 ```
 
-Current backend coverage:
+Current result:
 
 ```text
-Name          Stmts   Miss   Cover
----------------------------------
-backend/main.py  19      0    100%
----------------------------------
-TOTAL            19      0    100%
+Name             Stmts   Miss   Cover
+------------------------------------
+backend/main.py      21      0    100%
+------------------------------------
+TOTAL                21      0    100%
 ```
 
-The backend currently has 100% statement coverage.
+### Frontend Tests
 
-## Backend Design Decisions
+Frontend tests use Vitest and React Testing Library.
 
-### FastAPI
+From the `frontend` directory:
 
-FastAPI was selected for the backend because it provides a concise way to build typed REST APIs in Python, including automatic request validation and OpenAPI documentation.
+```bash
+npm test
+```
 
-Go was listed as the preferred backend technology in the assessment. Python and FastAPI were chosen instead because they allowed the backend to be implemented confidently within the assignment's time constraint while prioritizing correctness, clarity, and maintainability.
+The current test suite contains six tests covering:
+
+- Initial calculator state
+- Numeric input
+- Resetting the calculator with AC
+- Sending an operation to the API and displaying its result
+- Handling an error response from the backend
+- Handling a backend connection failure
+
+API requests are mocked in the frontend unit tests so that the frontend can be tested independently from the FastAPI server.
+
+### Frontend Coverage
+
+From the `frontend` directory:
+
+```bash
+npm run coverage
+```
+
+Current coverage for `App.jsx`:
+
+```text
+Statements : 73.33%
+Branches   : 56.41%
+Functions  : 77.77%
+Lines      : 78.78%
+```
+
+Coverage is used as an aid for identifying untested code paths rather than as a target by itself. The tests prioritize the main user-visible behaviors and API integration paths.
+
+## Design Decisions
+
+### FastAPI Backend
+
+FastAPI was selected because it provides a concise way to build typed REST APIs in Python, including automatic request validation and OpenAPI documentation.
+
+
+### React with JavaScript
+
+The frontend uses React with JavaScript.
+
+JavaScript was selected to keep the implementation within familiar technology and prioritize a solution that could be implemented, tested, and maintained confidently within the available time.
 
 ### Stateless API
 
-The backend does not store calculator state or previous results. Each request contains all the information required to perform an operation.
+The backend does not store calculator state or previous results.
 
-Calculator state will be managed by the React frontend.
+Each API request contains both operands required to perform the operation. Calculator state, including the current display, selected operator, and operands, is managed by React.
+
+This keeps the backend stateless and separates API responsibilities from user interface state.
 
 ### Separate Operation Endpoints
 
@@ -255,14 +334,40 @@ This keeps the API explicit and easy to understand for the small number of suppo
 
 Operands are sent as query parameters because the operations are simple, read-only calculations and do not modify server-side resources.
 
-FastAPI's type annotations are used to validate the operands as numeric values.
+FastAPI type annotations validate the operands as numeric values.
 
-### Error Handling
+### Calculator-Style Interface
 
-FastAPI handles invalid numeric inputs automatically through request validation.
+Instead of using two independent numeric inputs, the frontend uses a familiar calculator-style interface.
 
-Application-specific edge cases, such as division by zero, are handled explicitly by the backend.
+React manages the input sequence and calculator state, but arithmetic operations themselves are sent to the backend when the user presses `=`.
 
-## Frontend
+This keeps the API integration visible in the application architecture rather than duplicating the arithmetic logic in the frontend.
 
-React frontend documentation will be added after its implementation.
+### API Requests
+
+The frontend uses the browser's native `fetch` API.
+
+Requests are triggered directly by the user's interaction with the calculator, so no `useEffect` is required for API calls.
+
+The frontend handles successful responses, HTTP errors returned by the API, and network errors such as the backend being unavailable.
+
+### CORS
+
+During development, the React application and FastAPI API run on different origins.
+
+FastAPI's CORS middleware allows `GET` requests from the local Vite development server so that the browser can communicate with the backend.
+
+## AI Tooling
+
+AI-assisted development tools were used during this assignment as permitted by the assessment instructions.
+
+AI was primarily used to:
+
+- Discuss implementation alternatives and keep the project scope appropriate for the assignment.
+- Generate initial implementations for parts of the backend and frontend.
+- Assist with test setup using pytest, Vitest, and React Testing Library.
+- Explain unfamiliar concepts and review implementation decisions.
+- Assist with documentation.
+
+Generated code was reviewed, executed, tested, and adjusted before being included in the project.
